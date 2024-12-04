@@ -8,9 +8,9 @@ export default function OverviewScreen({ navigation }: any) {
 
   // Esimerkki viimeisimmistä tapahtumista
   const recentTransactions = [
-    { id: '1', type: 'Tulo', amount: '500€', date: '01.12.2024' },
-    { id: '2', type: 'Kulu', amount: '150€', date: '30.11.2024' },
-    { id: '3', type: 'Tulo', amount: '300€', date: '29.11.2024' },
+    { id: '1', type: 'Tulo', amount: '500€', date: '01.12.2024', category: 'palkka' },
+    { id: '2', type: 'Kulu', amount: '150€', date: '30.11.2024', category:'asuminen' },
+    { id: '3', type: 'Tulo', amount: '300€', date: '29.11.2024', category:'lahja'  },
   ];
   // Esimerkkidata kokonaistuloille ja -menoille
   const totalIncome = recentTransactions
@@ -21,51 +21,48 @@ export default function OverviewScreen({ navigation }: any) {
     .filter((item) => item.type === 'Kulu')
     .reduce((sum, item) => sum + parseFloat(item.amount), 0);
 
-    return (
-        <ScrollView style={styles.container}>
-          {/* Tervetuloa-teksti käyttäjän nimellä */}
-          <Text style={styles.greeting}>Tervetuloa, {userName}!</Text>
-    
-          {/* Kaaviokuva */}
-          <Image
-            source={require("../../assets/images/chart-overview.png")}
-            style={styles.chartImage}
-          />
-    
-          {/* Yhteenveto tuloista ja menoista */}
-          <View style={styles.summaryBox}>
-            <Text style={styles.summaryText}>Tulot yhteensä: {totalIncome}€</Text>
-            <Text style={styles.summaryText}>Menot yhteensä: {totalExpense}€</Text>
-          </View>
-    
-          {/* Kuvaileva teksti ja laatikko viimeisille tapahtumille */}
-          <Text style={styles.sectionTitle}>Viimeisimmät tulot ja kulut</Text>
-          <View style={styles.transactionBox}>
-            <FlatList
-              data={recentTransactions}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={styles.transactionItem}>
-                  <Text style={styles.transactionText}>
-                    {item.type}: {item.amount} 
-                  </Text>
-                  <Text style={styles.transactionDate}>{item.date}</Text>
-                </View>
-              )}
-            />
-          </View>
-    
-          {/* Nappi seuraavalle sivulle */}
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => navigation.navigate('addExpense')}
-          >
-            <Text style={styles.addButtonText}>Lisää uusi tapahtuma</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      );
-    }
-    
+  return (
+    <ScrollView style={styles.container}>
+      {/* Tervetuloa-teksti käyttäjän nimellä */}
+      <Text style={styles.greeting}>Tervetuloa, {userName}!</Text>
+
+      {/* Kaaviokuva */}
+      <Image
+        source={require("../../assets/images/chart-overview.png")}
+        style={styles.chartImage}
+      />
+      <Text style={styles.sectionTitle}>Yhteenveto</Text>
+      <View style={styles.transactionBox}>
+        <Text style={styles.summaryIncome}>Tulot: {totalIncome}€</Text>
+        <Text style={styles.summaryExpense}>Menot: {totalExpense}€</Text>
+        <Text style={styles.summaryBalance}>Balanssi: {totalIncome - totalExpense}€</Text>
+      </View>
+
+
+      {/* Kuvaileva teksti ja laatikko viimeisille tapahtumille */}
+      <Text style={styles.sectionTitle}>Viimeisimmät tulot ja menot</Text>
+      <View style={styles.transactionBox}>
+        { recentTransactions.map(item => (
+          <View style={styles.transactionItem}>
+          <Text style={styles.transactionText}>
+            {item.type}: {item.amount} ({item.category})
+          </Text>
+          <Text style={styles.transactionDate}>{item.date}</Text>
+        </View>
+        ))}
+      </View>
+
+      {/* Nappi seuraavalle sivulle */}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate('addExpense')}
+      >
+        <Text style={styles.addButtonText}>Lisää uusi tapahtuma</Text>
+      </TouchableOpacity>
+    </ScrollView>
+  );
+}
+
 
 const styles = StyleSheet.create({
   // Yleinen container-tyyli
@@ -89,7 +86,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain', // Sovitetaan kuva säilyttäen mittasuhteet
     marginBottom: 20,
   },
-    
+
   // Yhteenveto-tyylit
   summaryBox: {
     backgroundColor: 'white',
@@ -108,7 +105,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.secondaryBackground, // Käytetään vaaleampaa tekstiväriä
+    color: Colors.titleText, // Käytetään vaaleampaa tekstiväriä
     marginBottom: 10,
   },
   // Laatikkotyylit
@@ -134,8 +131,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.secondaryBackground,
   },
-// Lisää-nappi
-addButton: {
+  // Lisää-nappi
+  addButton: {
     backgroundColor: Colors.buttonBackground,
     padding: 15,
     borderRadius: 5,
@@ -144,6 +141,33 @@ addButton: {
   addButtonText: {
     color: Colors.buttonText,
     fontSize: 16,
+  },
+  summaryHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: Colors.buttonText,
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 20,
+  },
+  summaryIncome: {
+    fontSize: 16,
+    color: "green",
+    fontWeight: "bold",
+  },
+  summaryExpense: {
+    fontSize: 16,
+    color: "red",
+    fontWeight: "bold",
+  },
+  summaryBalance: {
+    fontSize: 16,
+    color: Colors.buttonText,
+    fontWeight: "bold",
   },
 });
 

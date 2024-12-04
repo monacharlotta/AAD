@@ -19,7 +19,7 @@ export default function LoginScreen({ navigation }) {
         // Simuloidaan kirjautumista (voit lisätä API-kutsun tähän)
         if (username === "testi" && password === "salasana") {
             Alert.alert("Onnistui", "Kirjautuminen onnistui!");
-            navigation.navigate("overview");
+            navigation.navigate("overviewDrawer");
         } else {
             Alert.alert("Virhe", "Väärä käyttäjätunnus tai salasana.");
         }

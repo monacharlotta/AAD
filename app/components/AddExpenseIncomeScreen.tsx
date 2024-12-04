@@ -1,114 +1,93 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Switch } from "react-native";
 import Colors from "../constants/Colors";
 import { Picker } from "@react-native-picker/picker"; // Dropdown-valikko
 import DateTimePicker from "@react-native-community/datetimepicker"; // Päivämäärävalitsin
 
 export default function AddExpenseIncomeScreen({ navigation }) {
-  const [type, setType] = useState("expense"); // "expense" tai "income"
+  const [isIncome, setIsIncome] = useState(false); // Switchin tila, oletuksena meno
   const [date, setDate] = useState(new Date());
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("housing"); // Oletuskategoria
+  const [category, setCategory] = useState("asuminen"); // Oletuskategoria
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const categories = type === "expense"
-    ? ["Housing", "Food", "Transportation", "Entertainment", "Other"]
-    : ["Salary", "Gift", "Support", "Other"];
+  const categories = isIncome
+    ? ["Palkka", "Lahja", "Tuki", "Muu"]
+    : ["Asuminen", "Ruoka", "Liikenne", "Viihde", "Muu"];
 
-  const handleAdd = () => {
-    if (!amount || isNaN(Number(amount))) {
-      Alert.alert("Error", "Please enter a valid amount.");
-      return;
-    }
-
-    const newEntry = {
-      type,
-      date,
-      amount: parseFloat(amount),
-      category,
-    };
-
-    // Simuloi tietojen tallentamista (voisi lähettää API:lle tai Redux-storeen)
-    console.log("New Entry:", newEntry);
-    Alert.alert("Success", `${type === "expense" ? "Expense" : "Income"} added!`);
-
-    // Siirry takaisin overview-sivulle
-    navigation.navigate("overview", { newEntry });
+  const newEntry = {
+    type: isIncome ? "Tulo" : "Meno",
+    date,
+    amount: parseFloat(amount),
+    category,
   };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Add {type === "expense" ? "Expense" : "Income"}</Text>
+return (
+  <View style={styles.container}>
+    {/* Otsikko */}
+    <Text style={styles.title}>Lisää {isIncome ? "Tulo" : "Meno"}</Text>
 
-      {/* Napit tyypin valintaan */}
-      <View style={styles.typeSelector}>
-        <TouchableOpacity
-          style={[
-            styles.typeButton,
-            type === "expense" && styles.activeButton,
-          ]}
-          onPress={() => setType("expense")}
-        >
-          <Text style={styles.typeButtonText}>Expense</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.typeButton,
-            type === "income" && styles.activeButton,
-          ]}
-          onPress={() => setType("income")}
-        >
-          <Text style={styles.typeButtonText}>Income</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Päivämäärävalitsin */}
-      <TouchableOpacity
-        onPress={() => setShowDatePicker(true)}
-        style={styles.datePicker}
-      >
-        <Text style={styles.datePickerText}>
-          {date.toDateString()}
-        </Text>
-      </TouchableOpacity>
-      {showDatePicker && (
-        <DateTimePicker
-          value={date}
-          mode="date"
-          display="default"
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false);
-            if (selectedDate) setDate(selectedDate);
-          }}
-        />
-      )}
-
-      {/* Summakenttä */}
-      <TextInput
-        style={styles.input}
-        placeholder="Enter amount"
-        keyboardType="numeric"
-        value={amount}
-        onChangeText={setAmount}
+    {/* Switch nappula tulo/meno valintaan */}
+    <View style={styles.switchContainer}>
+      <Text style={styles.switchLabel}>Meno</Text>
+      <Switch
+        value={isIncome}
+        onValueChange={() => setIsIncome((prev) => !prev)}
+        trackColor={{ false: Colors.buttonBackground, true: "lightblue" }}
+        thumbColor={isIncome ? Colors.primaryBackground : Colors.buttonText}
       />
-
-      {/* Kategoriavalikko */}
-      <Picker
-        selectedValue={category}
-        onValueChange={(itemValue) => setCategory(itemValue)}
-        style={styles.picker}
-      >
-        {categories.map((cat, index) => (
-          <Picker.Item label={cat} value={cat.toLowerCase()} key={index} />
-        ))}
-      </Picker>
-
-      {/* Lisää-nappi */}
-      <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
-        <Text style={styles.addButtonText}>Add {type === "expense" ? "Expense" : "Income"}</Text>
-      </TouchableOpacity>
+      <Text style={styles.switchLabel}>Tulo</Text>
     </View>
-  );
+
+    {/* Päivämäärävalitsin */}
+    <TouchableOpacity
+      onPress={() => setShowDatePicker(true)}
+      style={styles.datePicker}
+    >
+      <Text style={styles.datePickerText}>
+        {date.toLocaleDateString("fi-FI")}
+      </Text>
+    </TouchableOpacity>
+    {showDatePicker && (
+      <DateTimePicker
+        value={date}
+        mode="date"
+        display="default"
+        onChange={(event, selectedDate) => {
+          setShowDatePicker(false);
+          if (selectedDate) setDate(selectedDate);
+        }}
+      />
+    )}
+
+    {/* Summakenttä */}
+    <TextInput
+      style={styles.input}
+      placeholder="Syötä summa (€)"
+      keyboardType="numeric"
+      value={amount}
+      onChangeText={setAmount}
+    />
+
+    {/* Kategoriavalikko */}
+    <Picker
+      selectedValue={category}
+      onValueChange={(itemValue) => setCategory(itemValue)}
+      style={styles.picker}
+    >
+      {categories.map((cat, index) => (
+        <Picker.Item label={cat} value={cat.toLowerCase()} key={index} />
+      ))}
+    </Picker>
+
+    {/* Lisää-nappi */}
+    <TouchableOpacity style={styles.addButton}>
+      <Text style={styles.addButtonText}>
+        Lisää {isIncome ? "Tulo" : "Meno"}
+      </Text>
+    </TouchableOpacity>
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -123,22 +102,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
   },
-  typeSelector: {
+  switchContainer: {
     flexDirection: "row",
     justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
   },
-  typeButton: {
-    padding: 10,
-    marginHorizontal: 5,
-    borderRadius: 5,
-    backgroundColor: Colors.buttonBackground,
-  },
-  activeButton: {
-    backgroundColor: "lightblue",
-  },
-  typeButtonText: {
+  switchLabel: {
+    fontSize: 16,
     color: Colors.buttonText,
+    marginHorizontal: 10,
   },
   datePicker: {
     padding: 10,
