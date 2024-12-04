@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import Colors from "../constants/Colors";
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
     // Tilanmuuttujat käyttäjänimen ja salasanan tallentamiseen
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
 
     // Funktio, joka käsittelee kirjautumisen
     const handleLogin = () => {
@@ -18,7 +19,7 @@ export default function LoginScreen() {
         // Simuloidaan kirjautumista (voit lisätä API-kutsun tähän)
         if (username === "testi" && password === "salasana") {
             Alert.alert("Onnistui", "Kirjautuminen onnistui!");
-            // Navigoi etusivulle (lisää navigointi myöhemmin)
+            navigation.navigate("overview");
         } else {
             Alert.alert("Virhe", "Väärä käyttäjätunnus tai salasana.");
         }
