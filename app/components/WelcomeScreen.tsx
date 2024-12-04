@@ -17,13 +17,13 @@ export default function WelcomeScreen({ navigation }) {
       </Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("LoginScreen")}
+        onPress={() => navigation.navigate("login")}
       >
         <Text style={styles.buttonText}>Kirjaudu sisään</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.button, styles.secondaryButton]}
-        onPress={() => navigation.navigate("RegisterScreen")}
+        onPress={() => navigation.navigate("register")}
       >
         <Text style={[styles.buttonText, styles.secondaryButtonText]}>
           Luo käyttäjätunnus
