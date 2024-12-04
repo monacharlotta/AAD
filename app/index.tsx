@@ -2,6 +2,8 @@ import { StatusBar } from 'expo-status-bar';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './components/LoginScreen';
 import WelcomeScreen from './components/WelcomeScreen';
+import Colors from './constants/Colors';
+import RegisterScreen from './components/RegisterScreen';
 
 export default function Index() {
 
@@ -9,12 +11,12 @@ export default function Index() {
 
   return (
     <>
-      <StatusBar style='dark' />
+      <StatusBar style='light' />
       <Stack.Navigator
           screenOptions={{
-            headerStyle: { backgroundColor: 'lightblue' },
-            headerTintColor: 'pink',
-            contentStyle: { backgroundColor: 'pink' }
+            headerStyle: { backgroundColor: Colors.buttonBackground },
+            headerTintColor: Colors.primaryBackground,
+            contentStyle: { backgroundColor: Colors.primaryBackground }
           }}
           initialRouteName='welcome'>
           <Stack.Screen
@@ -25,6 +27,10 @@ export default function Index() {
             name='welcome'
             component={WelcomeScreen}
             options={{ title: 'Welcome!' }} />
+            <Stack.Screen
+            name='register'
+            component={RegisterScreen}
+            options={{ title: 'Register' }} />
         </Stack.Navigator>
     </>
 
