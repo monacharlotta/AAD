@@ -43,7 +43,7 @@ export default function OverviewScreen({ navigation }: any) {
       <Text style={styles.sectionTitle}>Viimeisimmät tulot ja menot</Text>
       <View style={styles.transactionBox}>
         { recentTransactions.map(item => (
-          <View style={styles.transactionItem}>
+          <View style={styles.transactionItem} key={item.id}>
           <Text style={styles.transactionText}>
             {item.type}: {item.amount} ({item.category})
           </Text>
