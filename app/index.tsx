@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import LoginScreen from './components/LoginScreen';
 import WelcomeScreen from './components/WelcomeScreen';
 import Colors from './constants/Colors';
@@ -10,10 +11,23 @@ import AddExpenseIncomeScreen from './components/AddExpenseIncomeScreen';
 export default function Index() {
 
   const Stack = createNativeStackNavigator();
+  const Drawer = createDrawerNavigator();
+
+  const DrawerNavigator = () => (
+    <Drawer.Navigator>
+      <Drawer.Screen
+      name='overview'
+      component={OverviewScreen}
+      options={{ title: 'Overview' }} />
+      <Drawer.Screen
+          name='addExpense'
+          component={AddExpenseIncomeScreen} 
+          options={{ title: 'Add Expense' }} /> 
+    </Drawer.Navigator>
+  );
 
   return (
     <>
-      <StatusBar style='light' />
       <Stack.Navigator
         screenOptions={{
           headerStyle: { backgroundColor: Colors.buttonBackground },
@@ -34,13 +48,9 @@ export default function Index() {
           component={RegisterScreen}
           options={{ title: 'Register' }} />
         <Stack.Screen
-          name='overview'
-          component={OverviewScreen} 
-          options={{ title: 'Overview' }} /> 
-          <Stack.Screen
-          name='addExpense'
-          component={AddExpenseIncomeScreen} 
-          options={{ title: 'Add Expense' }} /> 
+          name='overviewDrawer'
+          component={DrawerNavigator}
+          options={{ headerShown: false }} /> 
       </Stack.Navigator>
     </>
 
