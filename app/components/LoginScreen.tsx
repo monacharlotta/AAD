@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import Colors from "../constants/Colors";
 
 export default function LoginScreen() {
     // Tilanmuuttujat käyttäjänimen ja salasanan tallentamiseen
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
         justifyContent: "center", // Keskittää pystysuunnassa
         alignItems: "center", // Keskittää vaakasuunnassa
         padding: 20,
-        backgroundColor: "pink", // Vaalea taustaväri
+        backgroundColor: Colors.primaryBackground, // Vaalea taustaväri
     },
     title: {
         fontSize: 24, // Suurempi fontti otsikolle
@@ -78,13 +79,13 @@ const styles = StyleSheet.create({
         backgroundColor: "white", // Valkoinen tausta
     },
     button: {
-        backgroundColor: "lightblue", //napin väri
+        backgroundColor: Colors.buttonBackground, //napin väri
         padding: 10, // Sisennys
         borderRadius: 5, // Pyöristetyt reunat
         alignItems: "center", // Keskittää tekstin vaakasuunnassa
     },
     buttonText: {
-        color: "black" //tekstin väri
+        color: Colors.buttonText //tekstin väri
 
     }
 });
