@@ -6,7 +6,7 @@ export default function WelcomeScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <Image
-                source={require("../assets/images/welcome-image.png")}
+                source={require("../../assets/images/welcome-image.png")}
                 style={styles.image}
                 resizeMode="contain"
             />
