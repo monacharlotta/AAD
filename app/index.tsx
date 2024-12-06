@@ -18,11 +18,11 @@ export default function Index() {
       <Drawer.Screen
       name='overview'
       component={OverviewScreen}
-      options={{ title: 'Overview' }} />
+      options={{ title: 'Yleisnäkymä' }} />
       <Drawer.Screen
           name='addExpense'
           component={AddExpenseIncomeScreen} 
-          options={{ title: 'Add Expense' }} /> 
+          options={{ title: 'Lisää menoerä' }} /> 
     </Drawer.Navigator>
   );
 
@@ -38,15 +38,15 @@ export default function Index() {
         <Stack.Screen
           name='login'
           component={LoginScreen}
-          options={{ title: 'Login' }} />
+          options={{ title: 'Kirjaudu sisään' }} />
         <Stack.Screen
           name='welcome'
           component={WelcomeScreen}
-          options={{ title: 'Welcome!' }} />
+          options={{ title: 'Tervetuloa!' }} />
         <Stack.Screen
           name='register'
           component={RegisterScreen}
-          options={{ title: 'Register' }} />
+          options={{ title: 'Rekisteröidy' }} />
         <Stack.Screen
           name='overviewDrawer'
           component={DrawerNavigator}
