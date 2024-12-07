@@ -18,7 +18,7 @@ export default function OverviewScreen({ navigation }: any) {
     .reduce((sum: number, item: { amount: string; }) => sum + parseFloat(item.amount), 0);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {/* Tervetuloa-teksti käyttäjän nimellä */}
       <Text style={styles.greeting}>Tervetuloa, {userName}!</Text>
 
@@ -63,7 +63,6 @@ export default function OverviewScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   // Yleinen container-tyyli
   container: {
-    flex: 1,
     backgroundColor: Colors.primaryBackground, // Taustaväri määritelty Colorsissa
     padding: 20,
   },
