@@ -34,7 +34,7 @@ export default function LoginScreen({ navigation }) {
             Alert.alert("Onnistui", "Kirjautuminen onnistui!");
             navigation.navigate("overviewDrawer");
         } catch (error) {
-            Alert.alert("Virhe", "Väärä käyttäjätunnus tai salasana.");
+            Alert.alert("Virhe", "Väärä sähköposti tai salasana.");
         }
     };
 
@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }) {
             {/* Käyttäjänimen syöttökenttä */}
             <TextInput
                 style={styles.input}
-                placeholder="Käyttäjätunnus"
+                placeholder="Sähköposti"
                 value={username}
                 onChangeText={(text) => setUsername(text)} // Päivittää käyttäjänimen
             />
