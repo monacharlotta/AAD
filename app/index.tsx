@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import LoginScreen from './components/LoginScreen';
@@ -7,6 +6,7 @@ import Colors from './constants/Colors';
 import RegisterScreen from './components/RegisterScreen';
 import OverviewScreen from './components/OverviewScreen';
 import AddExpenseIncomeScreen from './components/AddExpenseIncomeScreen';
+import ContextProvider from './store/Context';
 
 export default function Index() {
 
@@ -27,7 +27,7 @@ export default function Index() {
   );
 
   return (
-    <>
+    <ContextProvider>
       <Stack.Navigator
         screenOptions={{
           headerStyle: { backgroundColor: Colors.buttonBackground },
@@ -52,7 +52,6 @@ export default function Index() {
           component={DrawerNavigator}
           options={{ headerShown: false }} /> 
       </Stack.Navigator>
-    </>
-
+    </ContextProvider>
   );
 }

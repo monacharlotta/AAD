@@ -1,26 +1,34 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Switch } from "react-native";
+import { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Switch } from "react-native";
 import Colors from "../constants/Colors";
 import { Picker } from "@react-native-picker/picker"; // Dropdown-valikko
 import DateTimePicker from "@react-native-community/datetimepicker"; // Päivämäärävalitsin
+import { useAppContext } from "../store/Context";
 
-export default function AddExpenseIncomeScreen({ navigation }) {
+export default function AddExpenseIncomeScreen({ navigation } : any) {
   const [isIncome, setIsIncome] = useState(false); // Switchin tila, oletuksena meno
-  const [date, setDate] = useState(new Date());
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("asuminen"); // Oletuskategoria
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
   const categories = isIncome
     ? ["Palkka", "Lahja", "Tuki", "Muu"]
     : ["Asuminen", "Ruoka", "Liikenne", "Viihde", "Muu"];
 
-  const newEntry = {
-    type: isIncome ? "Tulo" : "Meno",
-    date,
-    amount: parseFloat(amount),
-    category,
-  };
+  const [date, setDate] = useState(new Date());
+  const [amount, setAmount] = useState("");
+  const [category, setCategory] = useState(categories[0]); // Oletuskategoria
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const { addTransaction } = useAppContext();
+  const addTransactionPressed = () => {
+    addTransaction(isIncome, amount, date, category);
+
+    // Reset local state
+    setIsIncome(false);
+    setDate(new Date());
+    setAmount("");
+    setCategory(categories[0]);
+    setShowDatePicker(false);
+
+    navigation.navigate("overview");
+  }
 
 return (
   <View style={styles.container}>
@@ -48,6 +56,7 @@ return (
         {date.toLocaleDateString("fi-FI")}
       </Text>
     </TouchableOpacity>
+
     {showDatePicker && (
       <DateTimePicker
         value={date}
@@ -81,7 +90,7 @@ return (
     </Picker>
 
     {/* Lisää-nappi */}
-    <TouchableOpacity style={styles.addButton}>
+    <TouchableOpacity style={styles.addButton} onPress={addTransactionPressed}>
       <Text style={styles.addButtonText}>
         Lisää {isIncome ? "Tulo" : "Meno"}
       </Text>

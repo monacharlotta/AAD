@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import Colors from "../constants/Colors";
 
@@ -11,13 +11,14 @@ export default function LoginScreen({ navigation }) {
     // Funktio, joka käsittelee kirjautumisen
     const handleLogin = () => {
         // Tarkistetaan, että kentät eivät ole tyhjiä
-        if (username === "" || password === "") {
-            Alert.alert("Virhe", "Täytä kaikki kentät!");
-            return;
-        }
+        // if (username === "" || password === "") {
+        //     Alert.alert("Virhe", "Täytä kaikki kentät!");
+        //     return;
+        // }
 
         // Simuloidaan kirjautumista (voit lisätä API-kutsun tähän)
-        if (username === "testi" && password === "salasana") {
+        // if (username === "testi" && password === "salasana") {
+            if (true) {
             Alert.alert("Onnistui", "Kirjautuminen onnistui!");
             navigation.navigate("overviewDrawer");
         } else {

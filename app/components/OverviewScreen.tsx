@@ -1,25 +1,21 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import Colors from '../constants/Colors';
+import { useAppContext } from '../store/Context';
 
 export default function OverviewScreen({ navigation }: any) {
+  const { transactions } = useAppContext();
+
   // Esimerkki käyttäjän nimi
   const userName = "Mona";
 
-  // Esimerkki viimeisimmistä tapahtumista
-  const recentTransactions = [
-    { id: '1', type: 'Tulo', amount: '500€', date: '01.12.2024', category: 'palkka' },
-    { id: '2', type: 'Kulu', amount: '150€', date: '30.11.2024', category:'asuminen' },
-    { id: '3', type: 'Tulo', amount: '300€', date: '29.11.2024', category:'lahja'  },
-  ];
   // Esimerkkidata kokonaistuloille ja -menoille
-  const totalIncome = recentTransactions
-    .filter((item) => item.type === 'Tulo')
-    .reduce((sum, item) => sum + parseFloat(item.amount), 0);
+  const totalIncome = transactions
+    .filter((item: { type: string; }) => item.type === 'Tulo')
+    .reduce((sum: number, item: { amount: string; }) => sum + parseFloat(item.amount), 0);
 
-  const totalExpense = recentTransactions
-    .filter((item) => item.type === 'Kulu')
-    .reduce((sum, item) => sum + parseFloat(item.amount), 0);
+  const totalExpense = transactions
+    .filter((item: { type: string; }) => item.type === 'Kulu')
+    .reduce((sum: number, item: { amount: string; }) => sum + parseFloat(item.amount), 0);
 
   return (
     <ScrollView style={styles.container}>
@@ -42,10 +38,10 @@ export default function OverviewScreen({ navigation }: any) {
       {/* Kuvaileva teksti ja laatikko viimeisille tapahtumille */}
       <Text style={styles.sectionTitle}>Viimeisimmät tulot ja menot</Text>
       <View style={styles.transactionBox}>
-        { recentTransactions.map(item => (
+        { transactions.map((item: { id: React.Key | null | undefined; type: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; amount: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; category: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; date: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; }) => (
           <View style={styles.transactionItem} key={item.id}>
           <Text style={styles.transactionText}>
-            {item.type}: {item.amount} ({item.category})
+            {item.type}: {item.amount}€ ({item.category})
           </Text>
           <Text style={styles.transactionDate}>{item.date}</Text>
         </View>
@@ -129,7 +125,7 @@ const styles = StyleSheet.create({
   },
   transactionDate: {
     fontSize: 14,
-    color: Colors.secondaryBackground,
+    color: Colors.bodyText,
   },
   // Lisää-nappi
   addButton: {
