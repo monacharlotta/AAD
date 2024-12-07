@@ -58,6 +58,8 @@ export default function RegisterScreen({ navigation}) {
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
       />
 
       {/* Password Input */}

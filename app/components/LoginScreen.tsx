@@ -8,15 +8,15 @@ const FIREBASE_API_KEY = "AIzaSyBOO0inMN8kSU8X53oap19D1R2b8sDwEIk";
 
 
 export default function LoginScreen({ navigation }) {
-    // Tilanmuuttujat käyttäjänimen ja salasanan tallentamiseen
-    const [username, setUsername] = useState("");
+    // Tilanmuuttujat s-postin ja salasanan tallentamiseen
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
 
     // Funktio, joka käsittelee kirjautumisen
     const handleLogin = async () => {
         // Tarkistetaan, että kentät eivät ole tyhjiä
-        if (username === "" || password === "") {
+        if (email === "" || password === "") {
             Alert.alert("Virhe", "Täytä kaikki kentät!");
             return;
         }
@@ -26,7 +26,7 @@ export default function LoginScreen({ navigation }) {
             const response = await axios.post(
                 `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
                 {
-                    email: username,
+                    email: email,
                     password: password,
                     returnSecureToken: true,
                 }
@@ -43,12 +43,15 @@ export default function LoginScreen({ navigation }) {
             {/* Otsikko */}
             <Text style={styles.title}>Kirjaudu sisään</Text>
 
-            {/* Käyttäjänimen syöttökenttä */}
+            {/* S-postin syöttökenttä */}
             <TextInput
                 style={styles.input}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
                 placeholder="Sähköposti"
-                value={username}
-                onChangeText={(text) => setUsername(text)} // Päivittää käyttäjänimen
+                value={email}
+                onChangeText={(text) => setEmail(text)} // Päivittää s-postin
             />
 
             {/* Salasanan syöttökenttä */}
