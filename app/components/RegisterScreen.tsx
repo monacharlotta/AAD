@@ -80,7 +80,7 @@ export default function RegisterScreen({ navigation}) {
 
       {/* Register Button */}
         <TouchableOpacity style={styles.button} onPress={handleRegister}>
-                <Text style={styles.buttonText}>Kirjaudu</Text>
+                <Text style={styles.buttonText}>Rekisteröidy</Text>
             </TouchableOpacity>
     </View>
   );
