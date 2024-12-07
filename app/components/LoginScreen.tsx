@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import axios from "axios";
 import Colors from "../constants/Colors";
+
+//lisätty API-avain tähän (varmaan fiksumpaa ettei ole tässä)
+const FIREBASE_API_KEY = "AIzaSyBOO0inMN8kSU8X53oap19D1R2b8sDwEIk";
+
 
 export default function LoginScreen({ navigation }) {
     // Tilanmuuttujat käyttäjänimen ja salasanan tallentamiseen
@@ -9,18 +14,26 @@ export default function LoginScreen({ navigation }) {
 
 
     // Funktio, joka käsittelee kirjautumisen
-    const handleLogin = () => {
+    const handleLogin = async () => {
         // Tarkistetaan, että kentät eivät ole tyhjiä
         if (username === "" || password === "") {
             Alert.alert("Virhe", "Täytä kaikki kentät!");
             return;
         }
 
-        // Simuloidaan kirjautumista (voit lisätä API-kutsun tähän)
-        if (username === "testi" && password === "salasana") {
+        // Firebase API-kutsu kirjautumista varten
+        try {
+            const response = await axios.post(
+                `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
+                {
+                    email: username,
+                    password: password,
+                    returnSecureToken: true,
+                }
+            );
             Alert.alert("Onnistui", "Kirjautuminen onnistui!");
             navigation.navigate("overviewDrawer");
-        } else {
+        } catch (error) {
             Alert.alert("Virhe", "Väärä käyttäjätunnus tai salasana.");
         }
     };

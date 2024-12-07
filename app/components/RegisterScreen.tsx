@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import axios from "axios";
 import Colors from '../constants/Colors';
 
-export default function RegisterScreen() {
+//lisätty API-avain tähän (varmaan fiksumpaa ettei ole tässä)
+const FIREBASE_API_KEY = "AIzaSyBOO0inMN8kSU8X53oap19D1R2b8sDwEIk";
+
+export default function RegisterScreen({ navigation}) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!username || !email || !password || !confirmPassword) {
       Alert.alert('Virhe', 'Täytä kaikki kentät.');
       return;
@@ -19,8 +23,20 @@ export default function RegisterScreen() {
       return;
     }
 
-    // Here you could add a registration API call or further logic
-    Alert.alert('Onnistui', `Tervetuloa, ${username}!`);
+    try {
+      const response = await axios.post(
+          `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`,
+          {
+              email: email,
+              password: password,
+              returnSecureToken: true,
+          }
+      );
+      Alert.alert("Onnistui", `Tervetuloa, ${username}!`);
+      navigation.navigate("login");
+  } catch (error) {
+      Alert.alert("Virhe", "Rekisteröinti epäonnistui.");
+  }
   };
 
   return (
