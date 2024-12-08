@@ -13,7 +13,6 @@ export default function OverviewScreen({ navigation }: any) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log("User ID:", user.uid); // Debugging to confirm user ID
         fetchUserName(user.uid);
       } else {
         console.log("No user is signed in.");
@@ -29,7 +28,6 @@ export default function OverviewScreen({ navigation }: any) {
       const userDoc = await getDoc(doc(db, "users", uid)); //FIRESTORE GET REQUEST (getDoc)
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        console.log("User document data:", userData); // Debugging to check Firestore data
         setUserName(userData.username); // Update the state with the username
       } else {
         console.log("No such document!");

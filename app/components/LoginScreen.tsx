@@ -18,35 +18,34 @@ export default function LoginScreen({ navigation }) {
     // Funktio, joka käsittelee kirjautumisen
     const handleLogin = async () => {
         if (email === "" || password === "") {
-          Alert.alert("Virhe", "Täytä kaikki kentät!");
-          return;
+            Alert.alert("Virhe", "Täytä kaikki kentät!");
+            return;
         }
-      
-        try {
-          const response = await axios.post(
-            `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
-            {
-              email: email,
-              password: password,
-              returnSecureToken: true,
-            }
-          );
-          
-    const { idToken, email: userEmail } = response.data; // Get the ID token and email
-    console.log("User logged in:", response.data);
 
-          // Sign in with custom token
-    const credential = EmailAuthProvider.credential(userEmail, password);
-    await signInWithCredential(auth, credential);
-    
-          Alert.alert("Onnistui", "Kirjautuminen onnistui!");
-          navigation.navigate("overviewDrawer");
-      } catch (error) {
-          console.error("Login error:", error); // Log the error for debugging
-          Alert.alert("Virhe", "Väärä sähköposti tai salasana.");
-      }
- };
-    
+        try {
+            const response = await axios.post(
+                `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
+                {
+                    email: email,
+                    password: password,
+                    returnSecureToken: true,
+                }
+            );
+
+            const { email: userEmail } = response.data; // Get the ID token and email
+            
+            // Sign in with custom token
+            const credential = EmailAuthProvider.credential(userEmail, password);
+            await signInWithCredential(auth, credential);
+
+            Alert.alert("Onnistui", "Kirjautuminen onnistui!");
+            navigation.navigate("overviewDrawer");
+        } catch (error) {
+            console.error("Login error:", error); // Log the error for debugging
+            Alert.alert("Virhe", "Väärä sähköposti tai salasana.");
+        }
+    };
+
 
     return (
         <View style={styles.container}>
