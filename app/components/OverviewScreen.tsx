@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.primaryBackground, // Taustaväri määritelty Colorsissa
     padding: 20,
+    minHeight: '100%'
   },
   // Tervetuloa-teksti
   greeting: {
