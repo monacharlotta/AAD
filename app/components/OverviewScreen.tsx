@@ -26,7 +26,7 @@ export default function OverviewScreen({ navigation }: any) {
   const fetchUserName = async (uid: string) => {
     try {
       // Fetch user document from Firestore using UID
-      const userDoc = await getDoc(doc(db, "users", uid));
+      const userDoc = await getDoc(doc(db, "users", uid)); //FIRESTORE GET REQUEST (getDoc)
       if (userDoc.exists()) {
         const userData = userDoc.data();
         console.log("User document data:", userData); // Debugging to check Firestore data
