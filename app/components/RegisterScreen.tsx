@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from "axios";
 import Colors from '../constants/Colors';
+import { db } from "../../firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
 
-//lisätty API-avain tähän (varmaan fiksumpaa ettei ole tässä)
+//lisätty API-avain tähän (varmaan fiksumpaa ettei ole tässä, mutta en saanu toimimaan mitenkää muuten)
 const FIREBASE_API_KEY = "AIzaSyBOO0inMN8kSU8X53oap19D1R2b8sDwEIk";
 
 export default function RegisterScreen({ navigation}) {
@@ -24,7 +26,7 @@ export default function RegisterScreen({ navigation}) {
     }
 
     try {
-      const response = await axios.post(
+      const response = await axios.post( //tähän voisi laittaa jonkun latausnäyttöjutun ettei käyttäjä rämpytä kirjautumis nappulaa
           `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`,
           {
               email: email,
@@ -32,11 +34,39 @@ export default function RegisterScreen({ navigation}) {
               returnSecureToken: true,
           }
       );
+
+      const { localId } = response.data;
+
+      //tallennetaan username ja sähköposti firestoreen
+      await setDoc(doc(db, "users", localId), {
+          username: username,
+          email: email,
+      });
+                                // lataus näytön voisi lopettaa kun rekisteröityminen onnistuu
       Alert.alert("Onnistui", `Tervetuloa, ${username}!`);
+      console.log("User registered and data stored in Firestore");
       navigation.navigate("login");
+
   } catch (error) {
-      Alert.alert("Virhe", "Rekisteröinti epäonnistui.");
-  }
+console.error("Registration error:", error); // Log the error for debugging
+      if (error.response) {
+        const errorCode = error.response.data.error.message;
+        switch (errorCode) {
+          case "EMAIL_EXISTS":
+            Alert.alert("Virhe", "Sähköposti on jo käytössä.");
+            break;
+          case "OPERATION_NOT_ALLOWED":
+            Alert.alert("Virhe", "Salasanakirjautuminen ei ole käytössä.");
+            break;
+          case "TOO_MANY_ATTEMPTS_TRY_LATER":
+            Alert.alert("Virhe", "Liian monta epäonnistunutta yritystä. Yritä myöhemmin uudelleen.");
+            break;
+          default:
+            Alert.alert("Virhe", `Rekisteröinti epäonnistui: ${errorCode}`);
+        }
+      } else {
+        Alert.alert("Virhe", "Verkkovirhe. Tarkista internet-yhteytesi.");
+      }  }
   };
 
   return (
