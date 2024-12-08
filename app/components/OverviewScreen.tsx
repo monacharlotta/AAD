@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
 import Colors from '../constants/Colors';
 import { useAppContext } from '../store/Context';
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import LoadingButton from "../components/LoadingButton"; // Tuodaan LoadingButton
 
 export default function OverviewScreen({ navigation }: any) {
   const { transactions } = useAppContext();
   const [userName, setUserName] = useState("");
+  const [loading, setLoading] = useState(false); // Latausanimaation tila
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -25,7 +27,7 @@ export default function OverviewScreen({ navigation }: any) {
   const fetchUserName = async (uid: string) => {
     try {
       // Fetch user document from Firestore using UID
-      const userDoc = await getDoc(doc(db, "users", uid)); //FIRESTORE GET REQUEST (getDoc)
+      const userDoc = await getDoc(doc(db, "users", uid)); // FIRESTORE GET REQUEST (getDoc)
       if (userDoc.exists()) {
         const userData = userDoc.data();
         setUserName(userData.username); // Update the state with the username
@@ -46,6 +48,15 @@ export default function OverviewScreen({ navigation }: any) {
     .filter((item: { type: string; }) => item.type === 'Kulu')
     .reduce((sum: number, item: { amount: string; }) => sum + parseFloat(item.amount), 0);
 
+  const handleNavigateToAddExpense = async () => {
+    setLoading(true);
+    try {
+      navigation.navigate('addExpense');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Tervetuloa-teksti käyttäjän nimellä */}
@@ -63,31 +74,30 @@ export default function OverviewScreen({ navigation }: any) {
         <Text style={styles.summaryBalance}>Balanssi: {totalIncome - totalExpense}€</Text>
       </View>
 
-
       {/* Kuvaileva teksti ja laatikko viimeisille tapahtumille */}
       <Text style={styles.sectionTitle}>Viimeisimmät tulot ja menot</Text>
       <View style={styles.transactionBox}>
-        { transactions.map((item: { id: React.Key | null | undefined; type: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; amount: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; category: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; date: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; }) => (
+        { transactions.map((item: { id: React.Key | null | undefined; type: string; amount: string; category: string; date: string; }) => (
           <View style={styles.transactionItem} key={item.id}>
-          <Text style={styles.transactionText}>
-            {item.type}: {item.amount}€ ({item.category})
-          </Text>
-          <Text style={styles.transactionDate}>{item.date}</Text>
-        </View>
+            <Text style={styles.transactionText}>
+              {item.type}: {item.amount}€ ({item.category})
+            </Text>
+            <Text style={styles.transactionDate}>{item.date}</Text>
+          </View>
         ))}
       </View>
 
-      {/* Nappi seuraavalle sivulle */}
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate('addExpense')}
-      >
-        <Text style={styles.addButtonText}>Lisää uusi tapahtuma</Text>
-      </TouchableOpacity>
+      {/* Lisää-nappi */}
+      <LoadingButton
+        onPress={handleNavigateToAddExpense}
+        loading={loading}
+        buttonText="Lisää uusi tapahtuma"
+        buttonStyle={styles.addButton}
+        textStyle={styles.addButtonText}
+      />
     </ScrollView>
   );
 }
-
 
 const styles = StyleSheet.create({
   // Yleinen container-tyyli

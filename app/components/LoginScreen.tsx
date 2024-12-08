@@ -1,27 +1,26 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { Text, View, TextInput, StyleSheet, Alert } from "react-native";
 import axios from "axios";
 import { signInWithCredential, EmailAuthProvider } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import Colors from "../constants/Colors";
+import LoadingButton from "../components/LoadingButton";
 
-//lisätty API-avain tähän (varmaan fiksumpaa ettei ole tässä)
+// Lisätty API-avain tähän (suositeltavaa siirtää ympäristömuuttujaksi)
 const FIREBASE_API_KEY = "AIzaSyBOO0inMN8kSU8X53oap19D1R2b8sDwEIk";
 
+export default function LoginScreen({ navigation }: { navigation: any }) {
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false); // Tila latausanimaatiolle
 
-export default function LoginScreen({ navigation }) {
-    // Tilanmuuttujat s-postin ja salasanan tallentamiseen
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-
-    // Funktio, joka käsittelee kirjautumisen
     const handleLogin = async () => {
         if (email === "" || password === "") {
             Alert.alert("Virhe", "Täytä kaikki kentät!");
             return;
         }
 
+        setLoading(true); // Näytä latausanimaatio
         try {
             const response = await axios.post(
                 `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
@@ -32,27 +31,26 @@ export default function LoginScreen({ navigation }) {
                 }
             );
 
-            const { email: userEmail } = response.data; // Get the ID token and email
-            
-            // Sign in with custom token
+            const { email: userEmail } = response.data; // Hae käyttäjän sähköposti
             const credential = EmailAuthProvider.credential(userEmail, password);
             await signInWithCredential(auth, credential);
 
             Alert.alert("Onnistui", "Kirjautuminen onnistui!");
             navigation.navigate("overviewDrawer");
         } catch (error) {
-            console.error("Login error:", error); // Log the error for debugging
+            console.error("Login error:", error); // Virheen lokitus
             Alert.alert("Virhe", "Väärä sähköposti tai salasana.");
+        } finally {
+            setLoading(false); // Piilota latausanimaatio
         }
     };
-
 
     return (
         <View style={styles.container}>
             {/* Otsikko */}
             <Text style={styles.title}>Kirjaudu sisään</Text>
 
-            {/* S-postin syöttökenttä */}
+            {/* Sähköpostin syöttökenttä */}
             <TextInput
                 style={styles.input}
                 keyboardType="email-address"
@@ -60,7 +58,7 @@ export default function LoginScreen({ navigation }) {
                 autoCorrect={false}
                 placeholder="Sähköposti"
                 value={email}
-                onChangeText={(text) => setEmail(text)} // Päivittää s-postin
+                onChangeText={(text) => setEmail(text)} // Päivittää sähköpostin
             />
 
             {/* Salasanan syöttökenttä */}
@@ -72,10 +70,14 @@ export default function LoginScreen({ navigation }) {
                 onChangeText={(text) => setPassword(text)} // Päivittää salasanan
             />
 
-            {/* Kirjautumisnappi */}
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Kirjaudu</Text>
-            </TouchableOpacity>
+            {/* Kirjautumisnappi tai latausanimaatio */}
+            <LoadingButton
+                onPress={handleLogin}
+                loading={loading}
+                buttonText="Kirjaudu"
+                buttonStyle={styles.button}
+                textStyle={styles.buttonText}
+            />
         </View>
     );
 }
@@ -87,7 +89,7 @@ const styles = StyleSheet.create({
         justifyContent: "center", // Keskittää pystysuunnassa
         alignItems: "center", // Keskittää vaakasuunnassa
         padding: 20,
-        backgroundColor: Colors.primaryBackground, // Vaalea taustaväri
+        backgroundColor: Colors.primaryBackground, // Taustaväri
     },
     title: {
         fontSize: 24, // Suurempi fontti otsikolle
@@ -105,13 +107,13 @@ const styles = StyleSheet.create({
         backgroundColor: "white", // Valkoinen tausta
     },
     button: {
-        backgroundColor: Colors.buttonBackground, //napin väri
+        backgroundColor: Colors.buttonBackground, // Napin väri
         padding: 10, // Sisennys
         borderRadius: 5, // Pyöristetyt reunat
         alignItems: "center", // Keskittää tekstin vaakasuunnassa
     },
     buttonText: {
-        color: Colors.buttonText //tekstin väri
-
-    }
+        color: Colors.buttonText, // Tekstin väri
+        fontWeight: "bold",
+    },
 });

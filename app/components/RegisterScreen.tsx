@@ -1,19 +1,32 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import axios from "axios";
 import Colors from '../constants/Colors';
 import { db } from "../../firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
+import LoadingButton from '../components/LoadingButton';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+// Siirrä FIREBASE_API_KEY ympäristömuuttujaksi pitkässä juoksussa
 const FIREBASE_API_KEY = "AIzaSyBOO0inMN8kSU8X53oap19D1R2b8sDwEIk";
 
-export default function RegisterScreen({ navigation }) {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [loading, setLoading] = useState(false); // New state for loading indicator
+// Navigaation reitit
+type RootStackParamList = {
+    Register: undefined;
+    login: undefined;
+};
 
+// Navigaation props-tyyppi
+type RegisterScreenProps = NativeStackScreenProps<RootStackParamList, 'Register'>;
+
+export default function RegisterScreen({ navigation }: RegisterScreenProps) {
+    const [username, setUsername] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [confirmPassword, setConfirmPassword] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+
+    // Rekisteröintitoiminto
     const handleRegister = async () => {
         if (!username || !email || !password || !confirmPassword) {
             Alert.alert('Virhe', 'Täytä kaikki kentät.');
@@ -25,27 +38,25 @@ export default function RegisterScreen({ navigation }) {
             return;
         }
 
-        setLoading(true); // Show loading spinner
+        setLoading(true);
         try {
             const response = await axios.post(
                 `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${FIREBASE_API_KEY}`,
                 {
-                    email: email,
-                    password: password,
+                    email,
+                    password,
                     returnSecureToken: true,
                 }
             );
 
             const { localId } = response.data;
 
-            // Save username and email to Firestore
             await setDoc(doc(db, "users", localId), {
-                username: username,
-                email: email,
+                username,
+                email,
             });
 
             Alert.alert("Onnistui", `Tervetuloa, ${username}!`);
-            console.log("User registered and data stored in Firestore");
             navigation.navigate("login");
         } catch (error) {
             console.error("Registration error:", error);
@@ -69,7 +80,7 @@ export default function RegisterScreen({ navigation }) {
                 Alert.alert("Virhe", "Verkkovirhe. Tarkista internet-yhteytesi.");
             }
         } finally {
-            setLoading(false); // Hide loading spinner
+            setLoading(false);
         }
     };
 
@@ -77,7 +88,6 @@ export default function RegisterScreen({ navigation }) {
         <View style={styles.container}>
             <Text style={styles.title}>Luo käyttäjätunnus</Text>
 
-            {/* Username Input */}
             <TextInput
                 style={styles.input}
                 placeholder="Käyttäjätunnus"
@@ -85,7 +95,6 @@ export default function RegisterScreen({ navigation }) {
                 onChangeText={setUsername}
             />
 
-            {/* Email Input */}
             <TextInput
                 style={styles.input}
                 placeholder="Sähköposti"
@@ -96,7 +105,6 @@ export default function RegisterScreen({ navigation }) {
                 autoCorrect={false}
             />
 
-            {/* Password Input */}
             <TextInput
                 style={styles.input}
                 placeholder="Salasana"
@@ -105,7 +113,6 @@ export default function RegisterScreen({ navigation }) {
                 secureTextEntry={true}
             />
 
-            {/* Confirm Password Input */}
             <TextInput
                 style={styles.input}
                 placeholder="Vahvista salasana"
@@ -114,14 +121,13 @@ export default function RegisterScreen({ navigation }) {
                 secureTextEntry={true}
             />
 
-            {/* Show Loading Indicator or Register Button */}
-            {loading ? (
-                <ActivityIndicator size="large" color={Colors.buttonBackground} />
-            ) : (
-                <TouchableOpacity style={styles.button} onPress={handleRegister}>
-                    <Text style={styles.buttonText}>Rekisteröidy</Text>
-                </TouchableOpacity>
-            )}
+            <LoadingButton
+                onPress={handleRegister}
+                loading={loading}
+                buttonText="Rekisteröidy"
+                buttonStyle={styles.button}
+                textStyle={styles.buttonText}
+            />
         </View>
     );
 }

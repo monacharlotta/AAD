@@ -1,7 +1,40 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Image } from "react-native";
 import Colors from "../constants/Colors"; // Tuo väriasetukset
+import LoadingButton from "../components/LoadingButton"; // Tuo LoadingButton-komponentti
+import { NativeStackScreenProps } from "@react-navigation/native-stack"; // Tyyppimäärittely navigaatiolle
 
-export default function WelcomeScreen({ navigation }) {
+// Navigaatioreitit
+type RootStackParamList = {
+    login: undefined;
+    register: undefined;
+};
+
+// Props-tyyppi WelcomeScreenille
+type WelcomeScreenProps = NativeStackScreenProps<RootStackParamList, "login">;
+
+export default function WelcomeScreen({ navigation }: WelcomeScreenProps) {
+    const [loadingLogin, setLoadingLogin] = useState(false); // Latausanimaatio login-painikkeelle
+    const [loadingRegister, setLoadingRegister] = useState(false); // Latausanimaatio register-painikkeelle
+
+    const handleNavigateLogin = async () => {
+        setLoadingLogin(true);
+        try {
+            navigation.navigate("login");
+        } finally {
+            setLoadingLogin(false);
+        }
+    };
+
+    const handleNavigateRegister = async () => {
+        setLoadingRegister(true);
+        try {
+            navigation.navigate("register");
+        } finally {
+            setLoadingRegister(false);
+        }
+    };
+
     return (
         <View style={styles.container}>
             <Image
@@ -14,20 +47,24 @@ export default function WelcomeScreen({ navigation }) {
                 Tämä sovellus auttaa sinua hallitsemaan kuluja ja tuloja helposti.
                 Voit lisätä kulut ja tulot, tarkastella yhteenvetoa ja paljon muuta.
             </Text>
-            <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.navigate("login")}
-            >
-                <Text style={styles.buttonText}>Kirjaudu sisään</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={[styles.button, styles.secondaryButton]}
-                onPress={() => navigation.navigate("register")}
-            >
-                <Text style={[styles.buttonText, styles.secondaryButtonText]}>
-                    Luo käyttäjätunnus
-                </Text>
-            </TouchableOpacity>
+
+            {/* Login-painike */}
+            <LoadingButton
+                onPress={handleNavigateLogin}
+                loading={loadingLogin}
+                buttonText="Kirjaudu sisään"
+                buttonStyle={styles.button}
+                textStyle={styles.buttonText}
+            />
+
+            {/* Register-painike */}
+            <LoadingButton
+                onPress={handleNavigateRegister}
+                loading={loadingRegister}
+                buttonText="Luo käyttäjätunnus"
+                buttonStyle={[styles.button, styles.secondaryButton]}
+                textStyle={[styles.buttonText, styles.secondaryButtonText]}
+            />
         </View>
     );
 }
@@ -38,7 +75,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         padding: 20,
-        backgroundColor: Colors.primaryBackground, // Käytetään pinkkiä taustavärinä
+        backgroundColor: Colors.primaryBackground,
     },
     image: {
         width: "80%",
@@ -48,36 +85,36 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: "bold",
-        color: Colors.titleText, // Otsikon väri (tummansininen)
+        color: Colors.titleText,
         marginBottom: 10,
         textAlign: "center",
     },
     description: {
         fontSize: 16,
-        color: Colors.bodyText, // Kuvauksen väri (harmaa)
+        color: Colors.bodyText,
         textAlign: "center",
         marginBottom: 20,
     },
     button: {
-        backgroundColor: Colors.buttonBackground, // Napin taustaväri (vaaleansininen)
+        backgroundColor: Colors.buttonBackground,
         paddingVertical: 12,
         paddingHorizontal: 20,
-        borderRadius: 8, // Pyöristetyt reunat
+        borderRadius: 8,
         marginBottom: 10,
         alignItems: "center",
         width: "80%",
     },
     buttonText: {
-        color: Colors.buttonText, // Napin tekstiväri (musta)
+        color: Colors.buttonText,
         fontSize: 16,
         fontWeight: "bold",
     },
     secondaryButton: {
-        backgroundColor: Colors.secondaryBackground, // Napin taustaväri (valkoinen)
+        backgroundColor: Colors.secondaryBackground,
         borderWidth: 1,
-        borderColor: Colors.buttonBackground, // Vaaleansininen reuna
+        borderColor: Colors.buttonBackground,
     },
     secondaryButtonText: {
-        color: Colors.buttonBackground, // Tekstin väri (vaaleansininen)
+        color: Colors.buttonBackground,
     },
 });
